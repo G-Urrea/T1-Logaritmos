@@ -6,8 +6,6 @@
 /**
  
  */
-// Crea un string aleatorio, dado un char* y tamaño de string
-char *rand_string(char *str, size_t size); 
 
 // Crea un string aleatorio de largo size, requiere hacer free
 char* rand_string_alloc(size_t size); 

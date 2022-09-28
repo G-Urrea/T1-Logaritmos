@@ -3,7 +3,7 @@
 #include <time.h>
 #include <math.h>
 #include "rand_string.h"
-#include "alg2.h"
+#include "benchmark.h"
 
 typedef int (*func)(char*, char*, int);
 
@@ -18,7 +18,7 @@ void benchmark(int min, int max, int iter, func f, char* filename){
     char *s2;
     double ti, tf, delta;
     double mean;
-    double means[max-min];
+    double means[max-min +1];
 
     for (int i = min; i<=max; i++){
         int p = pow(2, i);
@@ -40,11 +40,8 @@ void benchmark(int min, int max, int iter, func f, char* filename){
         mean /= iter;
         printf("Iter: %d, Tpromedio: %f\n", i, mean);
         means[i-min] = mean;
-
         FILE *fp;
-
-        fp = fopen("resultados.txt", "w");
-
+        fp = fopen(filename, "w");
         for (int i = min; i <= max; i++) {
             fprintf(fp, "%d, %f\n", i, means[i-min]);
         }
@@ -53,9 +50,3 @@ void benchmark(int min, int max, int iter, func f, char* filename){
     }
 }
 
-int main(){
-
-    func f = &alg2;
-    benchmark(3, 15, 50, f, "resultados.txt");
-    return 0;
-}
