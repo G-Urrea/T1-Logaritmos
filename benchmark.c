@@ -40,13 +40,13 @@ void benchmark(int min, int max, int iter, func f, char* filename){
         mean /= iter;
         printf("Iter: %d, Tpromedio: %f\n", i, mean);
         means[i-min] = mean;
-        FILE *fp;
-        fp = fopen(filename, "w");
-        for (int i = min; i <= max; i++) {
+    }
+    FILE *fp;
+    fp = fopen(filename, "w");
+    for (int i = min; i <= max; i++) {
             fprintf(fp, "%d, %f\n", i, means[i-min]);
         }
 
-        fclose(fp);
-    }
+    fclose(fp);
 }
 
