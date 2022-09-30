@@ -2,7 +2,7 @@ files:=alg1.o alg2.o rand_string.o benchmark.o test.o
 flags:=-c -flto -Wall
 
 test: ${files}
-	gcc -flto -O -o  test ${files} -lm 
+	gcc -flto -O2 -o  test ${files} -lm 
 
 rand_string.o: rand_string.c
 	gcc ${flags} rand_string.c -lm
