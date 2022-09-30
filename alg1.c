@@ -4,9 +4,7 @@
 #include "alg1.h"
 
 int alg1(char* x, char* y, int n){
-    //unsigned n = strlen(x);
 
-   // int matrix[n+1][n+1];
     int **matrix = malloc((n+1) * sizeof *matrix);
     int i, j;
 
@@ -14,13 +12,12 @@ int alg1(char* x, char* y, int n){
     for (i = 0; i <= n; i++)
         matrix[i] = malloc((n+1) * sizeof *matrix[i]);
 
-    // Inicialización de matriz
+    // Inicializar matriz
     for (i=0; i<=n; i++){
         matrix[i][0]=i;
         matrix[0][i]=i;
     }
 
-    //
     int w[3]; //pesos
     int min;
     for (j=1;j<=n;j++){
