@@ -1,89 +1,99 @@
 #include <string.h> 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "alg3.h"
- //#include "alg1.h" pensé que podría usar el alg1 para hacerlo unu
+#include "alg1.h"
 
+// M es el tamaño de la memoria cache
+int alg3(char* x, char* y, int n, int M){
 
+    int result;
+    // Entra todo en memoria, se puede usar directamente el algoritmo 1
+    if ((n+1)*(n+1)<=M){
+        result = alg1(x, y, n);
+    }
+    else{
+        //Las submatrices son de tamaño  <M para que entren en memoria
+        double r = sqrt(M);
+        int b = r; //Se castea valor a entero 
 
-int alg3(char* x, char* y, int n, int B){
-    //pedimos espacio donde se almacenarán 
-    //los resultados de las fronteras solapadas
-    int **horizontales = malloc((n/B)*sizeof *horizontales); //las fronteras horizontales
-    //necesitamos las de la última fila de submatrices
-    int *f2 = malloc((B+1)*sizeof(int)); //la frontera vertical
-    
-    //inicializamos los indices que vamos a usar para recorrer las submatrices 
-    int l;// _ filas de submatrices
-    int m;// | columnas de submatrices
-    for(l=0;l<n/B;l++){
-        for(m=0;m<n/B;m++){
-            int i,j;
-            int **matrix = malloc((B+1) * sizeof *matrix);
-            
-            // Se pide memoria del Heap, ya que con B muy grande produce Stack Overflow
-            for (i = 0; i <= B; i++)
-                matrix[i] = malloc((B+1) * sizeof *matrix[i]);
+        // Las fronteras son de tamaño N+1
+        int* row = malloc((n+1)*sizeof(int));      
+        int* col = malloc ((n+1)*sizeof(int));
+        // Aquí se va escribiendo la frontera horizontal calculada
+        int* newrow = malloc((n+1)*sizeof(int));
+        // Inicializar fronteras
+        for (int k=0; k<=n; k++){
+            row[k] = k;
+            col[k] = k;
+        }
+        // Empezar iterando sobre toda la matriz
+        int p,q;
 
-            // Inicializar matriz
-            if(l == 0 && m = 0){
-                for (i=0; i<=B; i++){
-                    matrix[i][0]=i;
-                    matrix[0][i]=i;
-                }
-            }else if(l == 0){ //conozco los valores de arriba
-                for (i=B*m; i<=B*(m+1); i++){
-                    matrix[0][i] = i;
-                    matrix[i][0] = f2[i-B*m];
-                }
-            }else if(m == 0){ //conozco los valores de la izquierda
-                for (i=B*l; i<=B*(l+1); i++){
-                    matrix[i][0] = i;
-                    matrix[0] = *horizontales[0];
-                }
-            }else{
-                for(i=0; i<=B; i++){
-                    matrix[i][0] = f2[i-B*m];
-                    matrix[0] = *horizontales[m];
+        for (p=0; p<=n; p+=(b-1)){
+            //Se copian los nuevos valores
+            if(p>0){
+                for (int k=0; k<=n;k++){
+                    row[k] = newrow[k];
                 }
             }
-            
-            //aplicamos el algoritmo 1
-            int w[3]; //pesos
-            int min;
-            for (j=1;j<=n;j++){
-                for (i=1; i<=n; i++){
+            for (q=0; q<=n; q+=(b-1)){    
+                    int startx = q;
+                    int starty = p; 
+                    int lenj = b; //Largo de matriz (Numero de Columnas)
+                    int leni = b; //ancho de matriz  (Numero de Filas)
 
-                    w[0] = matrix[i][j-1] +1;
-                    w[1] = matrix[i-1][j] +1;
-                    w[2] = matrix[i-1][j-1];
-                    
-                    if (x[j-1]!=y[i-1]){
-                        w[2]+=1; // La arista SE adquiere peso
+                    if (startx+(b-1)>n){
+                        lenj = n+1-startx;
                     }
-                    //se busca el mínimo de los 3 pesos
-                    min = w[0];
-                    for (int k=1; k<3;k++){
-                        if (w[k]<min){
-                            min = w[k];
+                    if (starty + (b-1)>n){
+                        leni = n+1-starty;
+                    }
+                    int matrix[leni][lenj];
+
+                    if (leni>0 && leni>0){
+                    // Inicializar matriz con valores de la frontera
+                        for (int i=1; i<leni; i++){
+                            matrix[i][0] = col[starty+i];
+                        }
+                        for (int j=0; j<lenj; j++){
+                            matrix[0][j]=row[startx+j];
+                        }
+                        int w[3]; //pesos
+                        int min;
+                        for (int i=1;i<leni;i++){
+                            for (int j=1; j<lenj; j++){
+                                w[0] = matrix[i][j-1] +1;
+                                w[1] = matrix[i-1][j] +1;
+                                w[2] = matrix[i-1][j-1];
+                                        
+                                if (x[startx + j-1]!=y[starty+i-1]){
+                                        w[2]+=1; // La arista SE adquiere peso
+                                    }
+                                min = w[0];
+                                for (int k=1; k<3;k++){
+                                    if (w[k]<min){
+                                        min = w[k];
+                                    }
+                                }
+                                matrix[i][j]=min; // Se asigna la menor distancia
+                            }
+                        }
+                        // Una vez terminado el algoritmo, se reescriben las fronteras
+                        for (int i=0; i<leni;i++){
+                            col[starty+i] = matrix[i][lenj-1];   
+                        }
+                        for (int j=0; j<lenj;j++){
+                            newrow[startx+j] = matrix[leni-1][j];
                         }
                     }
-                     matrix[i][j]=min; // Se asigna la menor distancia
-                }
             }
-            for(i=0;i<B;i++){
-                horizontales[m][i] = matrix[B][i];
-                f2[i] = matrix[i][B]; 
-            }
-            
-            //Liberar memoria de la matriz que usamos
-            for (i = 0; i <= B; i++)
-                free(matrix[i]);
-            free(matrix);
         }
+        result = newrow[n];
+        free(row);
+        free(newrow);
+        free(col);
     }
-    int aux = sizeof(f2);
-    int result = f2[aux];
-    
     return result;
 }
