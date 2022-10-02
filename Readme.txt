@@ -1,0 +1,1 @@
+Para compilar los códigos basta con ejecutar el comando 'make test' en una terminal, posteriormente si se quiere ejecutar el test basta con escribir './test' en la terminal
