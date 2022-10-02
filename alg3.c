@@ -31,6 +31,7 @@ int alg3(char* x, char* y, int n, int M){
         // Empezar iterando sobre toda la matriz
         int p,q;
 
+        // Se avanza (b-1), para que se solapen las fronteras
         for (p=0; p<=n; p+=(b-1)){
             //Se copian los nuevos valores
             if(p>0){
@@ -50,7 +51,13 @@ int alg3(char* x, char* y, int n, int M){
                     if (starty + (b-1)>n){
                         leni = n+1-starty;
                     }
-                    int matrix[leni][lenj];
+
+                    // Se pide memoria del heap para prevenir stack overflow
+                    int **matrix = malloc((leni) * sizeof *matrix);
+                    //int matrix[leni][lenj];
+                    
+                    for (int i = 0; i < leni; i++)
+                        matrix[i] = malloc((lenj) * sizeof *matrix[i]);
 
                     if (leni>0 && leni>0){
                     // Inicializar matriz con valores de la frontera
@@ -87,6 +94,10 @@ int alg3(char* x, char* y, int n, int M){
                         for (int j=0; j<lenj;j++){
                             newrow[startx+j] = matrix[leni-1][j];
                         }
+                        // Liberar memoria
+                        for (int i = 0; i < leni; i++)
+                            free(matrix[i]);
+                        free(matrix);
                     }
             }
         }
