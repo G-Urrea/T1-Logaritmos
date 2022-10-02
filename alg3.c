@@ -5,17 +5,17 @@
 #include "alg3.h"
 #include "alg1.h"
 
-// M es el tamaño de la memoria cache
+// M es el tamaño de la memoria cache en bytes
 int alg3(char* x, char* y, int n, int M){
 
     int result;
     // Entra todo en memoria, se puede usar directamente el algoritmo 1
-    if ((n+1)*(n+1)<=M){
+    if ((n+1)*(n+1)*sizeof(int)<=M){
         result = alg1(x, y, n);
     }
     else{
-        //Las submatrices son de tamaño  <M para que entren en memoria
-        double r = sqrt(M);
+        //Las submatrices son de tamaño b^2*sizeof(int)<M para que entren en memoria
+        double r = sqrt(M/sizeof(int));
         int b = r; //Se castea valor a entero 
 
         // Las fronteras son de tamaño N+1
