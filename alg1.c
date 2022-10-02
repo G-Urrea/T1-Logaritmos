@@ -20,8 +20,8 @@ int alg1(char* x, char* y, int n){
 
     int w[3]; //pesos
     int min;
-    for (j=1;j<=n;j++){
-        for (i=1; i<=n; i++){
+    for (i=1;i<=n;i++){
+        for (j=1; j<=n; j++){
 
             w[0] = matrix[i][j-1] +1;
             w[1] = matrix[i-1][j] +1;
